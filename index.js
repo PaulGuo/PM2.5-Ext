@@ -3,20 +3,25 @@
 
 var pmx = require('pmx');
 var probe = pmx.probe();
-var init = pmx.init({
-    http          : true,
-    http_latency  : 200,
-    http_code     : 500,
-    ignore_routes : [],
-    profiling     : true,
-    errors        : true,
-    // By default if you add alert subfield in custom
-    // it's going to be enabled
-    alert_enabled : true,
-    custom_probes : true,
-    network       : true,
-    ports         : true
-});
+var init = function(options) {
+    options = options || {
+        http          : true,
+        http_latency  : 200,
+        http_code     : 500,
+        ignore_routes : [],
+        profiling     : true,
+        errors        : true,
+        // By default if you add alert subfield in custom
+        // it's going to be enabled
+        alert_enabled : true,
+        custom_probes : true,
+        network       : true,
+        ports         : true
+    };
+
+    pmx.init(options);
+    return this;
+};
 
 var meter = probe.meter({
     name      : 'req/sec',
@@ -30,9 +35,6 @@ var middleware = function(req, res, next) {
 };
 
 module.exports = {
-    init: function() {
-        init.apply(this, arguments);
-        return this;
-    },
+    init: init,
     middleware: middleware
 };
