@@ -29,8 +29,16 @@ var meter = probe.meter({
     timeframe : 60
 });
 
+var counter = probe.counter({
+    name : 'Current req processed'
+});
+
 var middleware = function(req, res, next) {
     meter.mark();
+    counter.inc();
+    req.on('end', function() {
+        counter.dec();
+    });
     next();
 };
 
